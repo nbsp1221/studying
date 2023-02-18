@@ -1,0 +1,29 @@
+{
+  "name": "Studying",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "privileged": true,
+  "runArgs": [
+    "--gpus=all"
+  ],
+  "remoteUser": "vscode",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/repositories/nbsp1221/studying,type=bind",
+  "workspaceFolder": "/home/vscode/repositories/nbsp1221/studying",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "eamodio.gitlens",
+        "GitHub.copilot",
+        "ms-azuretools.vscode-docker",
+        "ms-python.python",
+        "streetsidesoftware.code-spell-checker",
+        "WakaTime.vscode-wakatime"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      }
+    }
+  }
+}
