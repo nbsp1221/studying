@@ -14,7 +14,7 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | b
 # Install Python
 RUN sudo apt-get install -y python3 python3-pip python-is-python3 && \
     pip install --upgrade pip && \
-    pip install matplotlib numpy pandas tensorflow
+    pip install fastapi matplotlib numpy pandas tensorflow uvicorn
 
 # Install CUDA Toolkit 11.6
 RUN sudo wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin && \
