@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MNIST Handwritten Digit</title>
+    <meta charset="utf-8" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <main style="margin-top: 50px;">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 50px;">
+        <div style="line-height: 0;">
+          <canvas id="canvas" style="border: 1px solid black;" width="280" height="280"></canvas>
+          <canvas id="resized-canvas" style="display: none;" width="28" height="28"></canvas>
+        </div>
+        <button id="clear-button" style="padding: 10px 20px;">Clear</button>
+        <h1>
+          Your number is <span id="prediction" style="color: red;">???</span>
+        </h1>
+      </div>
+    </main>
+    <script>
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+
+      const resizedCanvas = document.getElementById('resized-canvas');
+      const resizedCtx = resizedCanvas.getContext('2d');
+
+      let isDrawing = false;
+      let lastX = 0;
+      let lastY = 0;
+
+      function clear() {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        resizedCtx.fillStyle = 'white';
+        resizedCtx.fillRect(0, 0, resizedCanvas.width, resizedCanvas.height);
+
+        document.getElementById('prediction').innerText = '???';
+      }
+
+      function predict() {
+        resizedCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 28, 28);
+
+        const pixels = resizedCtx.getImageData(0, 0, resizedCanvas.width, resizedCanvas.height).data;
+        const data = [];
+
+        for (let i = 0; i < pixels.length; i += 4) {
+          const r = pixels[i];
+          const g = pixels[i + 1];
+          const b = pixels[i + 2];
+
+          data.push(255 - ((r + g + b) / 3));
+        }
+
+        fetch('/predict', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        })
+          .then(response => response.json())
+          .then((data) => {
+            document.getElementById('prediction').innerText = data.prediction;
+          });
+      }
+
+      canvas.addEventListener('mousedown', (event) => {
+        isDrawing = true;
+        lastX = event.offsetX;
+        lastY = event.offsetY;
+      });
+
+      canvas.addEventListener('mousemove', (event) => {
+        if (!isDrawing) {
+          return;
+        }
+
+        ctx.lineWidth = 20;
+        ctx.strokeStyle = 'black';
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(event.offsetX, event.offsetY);
+        ctx.closePath();
+        ctx.stroke();
+
+        lastX = event.offsetX;
+        lastY = event.offsetY;
+      });
+
+      canvas.addEventListener('mouseup', () => {
+        isDrawing = false;
+        predict();
+      });
+
+      document.getElementById('clear-button').addEventListener('click', clear);
+
+      clear();
+    </script>
+  </body>
+</html>
