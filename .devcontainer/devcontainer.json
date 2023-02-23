@@ -4,10 +4,10 @@
     "dockerfile": "Dockerfile"
   },
   "privileged": true,
+  "appPort": ["8000:8000"],
   "runArgs": [
     "--gpus=all"
   ],
-  "forwardPorts": [8000],
   "remoteUser": "vscode",
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/repositories/nbsp1221/studying,type=bind",
   "workspaceFolder": "/home/vscode/repositories/nbsp1221/studying",
